@@ -69,6 +69,25 @@ body {
 }
 .header-status{
     text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-weather{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-weather img{
+    width: 28px;
+    height: 28px;
+}
+
+.weather-text{
+    font-size: 16px;
 }
 
 /* ==========================

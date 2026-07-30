@@ -1,5 +1,6 @@
 # Ignore local config containing API keys
 js/config.js
+js/config.example.js
 
 # Node modules (if any)
 node_modules/
