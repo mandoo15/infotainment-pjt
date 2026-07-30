@@ -1,0 +1,164 @@
+/* =========================
+   메인 레이아웃
+========================= */
+
+.home-layout{
+
+    display:flex;
+    gap:20px;
+
+    border:none;
+}
+
+
+/* =========================
+   왼쪽
+========================= */
+
+.profile-panel{
+
+    flex:1;
+
+    background:#181b1e;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+
+.profile-info h1{
+
+    font-size:42px;
+    margin-top:10px;
+
+}
+
+.profile-info h2{
+
+    color:#bbbbbb;
+    font-weight:400;
+
+}
+
+.profile-info p{
+
+    margin-top:30px;
+    color:#9e9e9e;
+
+}
+
+
+.car-image{
+
+    display:flex;
+    justify-content:center;
+
+}
+
+.car-image img{
+
+    width:100%;
+    max-width:420px;
+
+    border-radius:12px;
+
+}
+
+
+/* =========================
+   오른쪽
+========================= */
+
+.right-panel{
+
+    flex:1.4;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:20px;
+
+}
+
+
+/* =========================
+   지도
+========================= */
+#map {
+    width: 100%;
+    height: 300px;
+    border-radius: 12px;
+}
+.map-panel{
+    flex:2;
+    background:#181b1e;
+    border-radius:18px;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+}
+
+
+/* =========================
+   앱 버튼
+========================= */
+
+.app-panel{
+
+    flex:1;
+
+    display:flex;
+
+    gap:20px;
+
+}
+
+
+.app-button{
+
+    flex:1;
+
+    border:none;
+
+    border-radius:18px;
+
+    background:#181b1e;
+
+    color:white;
+
+    cursor:pointer;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:48px;
+
+    transition:.2s;
+
+}
+
+
+.app-button span{
+
+    margin-top:15px;
+
+    font-size:20px;
+
+}
+
+
+.app-button:hover{
+
+    background:#2a2d31;
+
+}

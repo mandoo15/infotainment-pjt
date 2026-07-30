@@ -1,0 +1,9 @@
+# Ignore local config containing API keys
+js/config.js
+
+# Node modules (if any)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
