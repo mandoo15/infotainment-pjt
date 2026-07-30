@@ -102,9 +102,12 @@ function generateDummyData(cityName) {
 function renderWeatherInteractive(data) {
 	const container = document.getElementById('result');
 	if (!container) return;
+	const now = new Date();
+	const dateLabel = `현재 ${now.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })} ${now.toLocaleDateString('ko-KR', { weekday: 'short' })}`;
 	container.innerHTML = `
 		<div class="main-display">
 			<div class="main-left">
+				<div class="display-date">${dateLabel}</div>
 				<div class="city-name">${data.city.name}</div>
 				<div class="big-desc" id="mainDesc"></div>
 				<div class="main-stats" id="mainStats"></div>
@@ -136,8 +139,9 @@ function renderWeatherInteractive(data) {
 		let rep = dayItems.find(i => i.dt_txt.includes('12:00:00')) || dayItems[0];
 
 		const dateObj = new Date(rep.dt_txt);
-		const dayNames = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-		const dayNameShort = dayNames[dateObj.getDay()];
+		// Format like "7월 31일 금요일"
+		const weekdayLong = new Intl.DateTimeFormat('ko-KR', { weekday: 'long' }).format(dateObj);
+		const dayNameShort = `${dateObj.getMonth()+1}월 ${dateObj.getDate()}일 ${weekdayLong}`;
 
 		const card = document.createElement('div');
 		card.className = 'weather-card' + (idx===0? ' active':'');
@@ -178,6 +182,17 @@ function updateMainDisplay(dayItems, dayKey) {
 	const mainIconEl = document.getElementById('mainIcon');
 	const mainDescEl = document.getElementById('mainDesc');
 	const mainStatsEl = document.getElementById('mainStats');
+
+	// Update the main display date to match the selected day's representative slot
+	const displayDateEl = document.querySelector('.display-date');
+	try {
+		const dateObj = new Date(rep.dt_txt);
+		const weekdayLong = new Intl.DateTimeFormat('ko-KR', { weekday: 'long' }).format(dateObj);
+		const dateText = `${dateObj.getMonth()+1}월 ${dateObj.getDate()}일 ${weekdayLong}`;
+		if (displayDateEl) displayDateEl.textContent = dateText;
+	} catch (e) {
+		// fallback: do nothing
+	}
 
 	if (mainTempEl) mainTempEl.textContent = Math.round(rep.main.temp) + '°C';
 	if (mainIconEl) { mainIconEl.src = iconUrlFor(rep.weather[0].icon); mainIconEl.alt = rep.weather[0].description; }
@@ -220,5 +235,23 @@ document.addEventListener('DOMContentLoaded', () => {
 		console.warn('axios not found — ensure CDN script is included');
 	}
 	getWeather();
+	// translate vertical wheel to horizontal scroll for the mini cards (desktop)
+	const bindWheelToMiniRow = () => {
+		const sc = document.querySelector('.weather-container');
+		if (!sc) return;
+		// avoid duplicate listeners
+		if (sc._wheelBound) return;
+		sc._wheelBound = true;
+		sc.addEventListener('wheel', (e) => {
+			if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+				e.preventDefault();
+				sc.scrollLeft += e.deltaY;
+			}
+		}, { passive: false });
+	};
+	bindWheelToMiniRow();
+	// re-bind after dynamic rendering
+	const observer = new MutationObserver(() => bindWheelToMiniRow());
+	observer.observe(document.getElementById('result') || document.body, { childList: true, subtree: true });
 });
 

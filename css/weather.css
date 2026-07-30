@@ -14,13 +14,14 @@ body {
     align-items: stretch;
 }
 
-h1 { margin-bottom: 30px; font-size: 28px; font-weight: 700; }
+.h1 { margin-bottom: 30px; font-size: 28px; font-weight: 700; }
 
-.weather-card { background-color: #383838; border-radius: 12px; padding: 24px 20px; width: 220px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display:flex; flex-direction:column; align-items:center; transition: transform 220ms ease, width 220ms ease, box-shadow 220ms ease; }
-.weather-card .date { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
-.weather-card .icon { width: 60px; height: 60px; margin: 8px 0; object-fit: contain; }
-.weather-card .description { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #e0e0e0; }
-.weather-card .info { font-size: 13px; color: #cccccc; line-height: 1.6; margin: 0; }
+/* Base weather card: slightly larger by default */
+.weather-card { background-color: rgba(255,255,255,0.03); backdrop-filter: blur(4px); border-radius: 12px; padding: 28px 22px; width: 260px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display:flex; flex-direction:column; align-items:center; transition: transform 220ms ease, width 220ms ease, box-shadow 220ms ease; border:1px solid rgba(255,255,255,0.025); font-size: 16px; }
+.weather-card .date { font-size: 18px; font-weight: 800; margin-bottom: 14px; }
+.weather-card .icon { width: 72px; height: 72px; margin: 10px 0; object-fit: contain; }
+.weather-card .description { font-size: 16px; font-weight: 700; margin-bottom: 14px; color: #e6eef6; }
+.weather-card .info { font-size: 15px; color: #d0d7db; line-height: 1.6; margin: 0; }
 
 .weather-card.expanded { transform: translateY(-6px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
 .weather-card .details { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 320ms ease, opacity 220ms ease; width:100%; }
@@ -28,9 +29,23 @@ h1 { margin-bottom: 30px; font-size: 28px; font-weight: 700; }
 
 /* Horizontal sliding */
 .weather-container { display:flex; gap:16px; overflow-x:auto; padding:8px 6px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling: touch; }
-.weather-container::-webkit-scrollbar { height:10px; }
-.weather-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius:8px; }
-.weather-card { flex: 0 0 300px; scroll-snap-align: start; }
+.weather-container::-webkit-scrollbar { height:8px; }
+.weather-container::-webkit-scrollbar-track { background: transparent; }
+.weather-container::-webkit-scrollbar-thumb { background: rgba(150,150,150,0.7); border-radius:8px; }
+.weather-container::-webkit-scrollbar-button { display: none; }
+.weather-container::-webkit-scrollbar-corner { background: transparent; }
+/* default flex sizing for larger cards */
+.weather-card { flex: 0 0 340px; scroll-snap-align: start; }
+
+/* Hide vertical scrollbar for the device screen but keep scrolling functional */
+.device-screen .screen-content {
+    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.device-screen .screen-content::-webkit-scrollbar { display: none; }
+
+/* Keep device screen vertical scrollbar hidden, but allow mini-row to show a thin gray scrollbar */
+.weather-container { scrollbar-width: thin; scrollbar-color: rgba(150,150,150,0.7) transparent; }
 
 /* Bezel and hw-frame */
 .hw-frame { position: relative; width: 100%; aspect-ratio: 16/9; display:flex; align-items:center; justify-content:center; }
@@ -43,18 +58,20 @@ h1 { margin-bottom: 30px; font-size: 28px; font-weight: 700; }
 .device-screen .screen-content { width:100%; height:100%; background: linear-gradient(180deg, rgba(8,12,14,0.95), rgba(6,8,10,0.98)); border-radius:8px; padding:10px; overflow:auto; position:relative; padding-top:72px; padding-bottom:72px; }
 
 /* Main display and mini cards */
-.main-display { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 12px; }
-.main-left { flex:1; color:#dff0ff; }
-.city-name { font-size:20px; font-weight:700; margin-bottom:8px; }
+.main-display { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 12px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); backdrop-filter: blur(4px); background-color: rgba(138, 138, 138, 0.4); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.main-left { flex:1; color:#fff; }
+.display-date { font-size:22px; font-weight:800; margin-bottom:6px; color:#ffffff; }
+.city-name { font-size:18px; font-weight:700; margin-bottom:8px; color:#e8f6ff; }
 .big-icon { width:160px; height:160px; object-fit:contain; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.6)); }
-.big-temp { font-size:64px; font-weight:700; color:#ffffff; }
+.big-temp { font-size:64px; font-weight:700; color:#fff; }
 .big-desc { font-size:18px; color:#cfe6f7; margin-top:6px; }
 .main-stats { margin-top:12px; color:#bcd7e8; font-size:14px; }
 .mini-row { margin-top:12px; }
-.mini-row .weather-card { width:120px; padding:12px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); }
+.mini-row .weather-card { width:180px; padding:16px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); border-radius: 12px; background-color: rgba(138, 138, 138, 0.4); box-shadow: 0 6px 18px rgba(0,0,0,0.35); margin: 0 5%; font-size: 1.05rem; }
 .weather-card.active { outline: 2px solid rgba(95,200,255,0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.6); transform: translateY(-6px); }
-.day-details { margin-top:14px; max-height:200px; overflow:auto; padding:8px; border-top:1px solid rgba(255,255,255,0.02); }
-.hour-row { display:flex; gap:12px; align-items:center; padding:8px 6px; border-bottom:1px solid rgba(255,255,255,0.02); }
+.day-details { margin-top:14px; /* show full details without internal scroll */ padding:12px; border-radius: 12px; background-color: rgba(138, 138, 138, 0.4); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.hour-row { display:flex; gap:12px; align-items:center; padding:20px 6px; border-bottom:1px solid rgba(255,255,255,0.3); }
+.day-details .hour-row:last-child { border-bottom: none; }
 .hour-row .time { width:56px; color:#bcd7e8; }
 .hour-row .hour-temp { width:72px; font-weight:700; color:#fff; }
 
