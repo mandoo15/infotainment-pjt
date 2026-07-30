@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Navigation</title>
+
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/navigation.css">
+</head>
+
+<body>
+
+<div class="dashboard-background">
+
+    <div class="display-frame">
+
+        <header class="display-header">
+
+            <div id="currentDate" class="header-date"></div>
+
+            <div id="currentTime" class="header-time"></div>
+
+            <div class="header-status">
+                <div id="header-weather" class="header-weather"></div>
+                <div id="header-battery" class="header-battery">🔋100%</div>
+            </div>
+
+        </header>
+
+        <main class="display-main">
+
+            <section class="page-content nav-layout">
+
+                <div class="search-box">
+                    <div class="search-row">
+                        <input id="nav-search-input" type="text" placeholder="검색할 장소를 입력하세요.">
+                        <button id="nav-search-button">검색</button>
+                    </div>
+                    <div id="autocomplete-list" class="autocomplete-list hidden"></div>
+                </div>
+
+                <div class="nav-body">
+                    <aside class="nav-left">
+                        <h2>검색 결과</h2>
+                        <div class="search-result">
+                            <p class="empty-message">검색어를 입력하고 검색 버튼을 눌러주세요.</p>
+                        </div>
+                    </aside>
+
+                    <section class="nav-right">
+                        <div class="map-panel">
+                            <h2>경로 지도</h2>
+                            <div id="nav-map"></div>
+                        </div>
+                    </section>
+                </div>
+
+            </section>
+
+        </main>
+
+        <footer class="display-footer">
+
+            <button onclick="location.href='../home/index.html'">홈</button>
+            <button onclick="location.href='../navigation/navigation.html'">네비게이션</button>
+            <button onclick="location.href='../weather/weather.html'">날씨</button>
+
+        </footer>
+
+    </div>
+
+</div>
+
+<script src="../js/config.js"></script>
+<script>
+    document.write(
+        `<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_API_KEY}&libraries=services"><\/script>`
+    );
+</script>
+<script src="../js/common.js"></script>
+<script src="../js/navigation.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard Home</title>
+
+    <!-- 공통 CSS -->
+    <link rel="stylesheet" href="../css/common.css">
+
+    <!-- 페이지 전용 CSS -->
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+
+<body>
+    <!-- 자동차 대시보드 배경 -->
+    <div class="dashboard-background">
+        <!-- 실제 디스플레이 -->
+        <div class="display-frame">
+            <!-- ================= Header ================= -->
+            <header class="display-header">
+                <div id="currentDate" class="header-date">
+                    2026.01.01
+                </div>
+
+                <div id="currentTime" class="header-time">
+                    00:00:00
+                </div>
+
+                <div class="header-status">
+                    <div id="header-weather" class="header-weather"></div>
+                    <div id="header-battery" class="header-battery">🔋100%</div>
+                </div>
+            </header>
+
+            <!-- ================= Main ================= -->
+            <main class="display-main">
+                <section class="page-content home-layout">
+                    <!-- 왼쪽 프로필 -->
+                    <section class="profile-panel">
+                        <div class="profile-info">
+                            <h2>시동 준비 완료</h2>
+                            <h1>차량 상태</h1>
+                            <p>안전하고 쾌적한 주행을 위한 정보를 확인해 보세요.</p>
+                        </div>
+
+                        <div class="car-image">
+                            <img src="../images/car.png" alt="자동차">
+                        </div>
+                    </section>
+
+                    <!-- 오른쪽 -->
+                    <section class="right-panel">
+                        <!-- 지도 -->
+                        <section class="map-panel">
+                            <h2>현재 위치</h2>
+                            <div id="map"></div>
+                        </section>
+
+                        <!-- 앱 -->
+                        <section class="app-panel">
+                            <button class="app-button navigation-btn" onclick="location.href='../navigation/navigation.html'">
+                                <span class="app-label">네비게이션</span>
+                                <span class="app-subtext">실시간 경로</span>
+                            </button>
+                            <button class="app-button weather-btn" onclick="location.href='../weather/weather.html'">
+                                <span class="app-label">날씨</span>
+                                <span class="app-subtext">오늘의 예보</span>
+                            </button>
+                        </section>
+                    </section>
+                </section>
+            </main>
+
+            <!-- ================= Footer ================= -->
+            <footer class="display-footer">
+                <button onclick="location.href='index.html'">
+                    홈
+                </button>
+
+                <button onclick="location.href='../navigation/navigation.html'">
+                    네비게이션
+                </button>
+
+                <button onclick="location.href='../weather/weather.html'">
+                    날씨
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script>
+        document.write(
+            `<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_API_KEY}"><\/script>`
+        );
+    </script>
+    <script src="../js/common.js"></script>
+    <script src="../js/index.js"></script>
+
+</body>
+
+</html>
