@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seoul 날씨 예보</title>
+    <style>
+        /* 다크 모드 배경 및 기본 스타일 */
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* 날씨 카드를 가로배치하는 컨테이너 */
+        .weather-container {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* 개별 날씨 카드 스타일 */
+        .weather-card {
+            background-color: #383838;
+            border-radius: 12px;
+            padding: 24px 20px;
+            width: 160px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .weather-card .date {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .weather-card .icon {
+            width: 60px;
+            height: 60px;
+            margin: 8px 0;
+            object-fit: contain;
+        }
+
+        .weather-card .description {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #e0e0e0;
+        }
+
+        .weather-card .info {
+            font-size: 13px;
+            color: #cccccc;
+            line-height: 1.6;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id='result'></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const apiKey = '53820d22bfc4fd47f47c41cab35293d5';
+
+        async function getWeather() {
+            const city = 'seoul';
+
+            const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric&lang=kr`;
+            try {
+                const res = await axios.get(url);
+                const data = res.data;
+                console.log(data);
+
+                const div = document.getElementById('result');
+                div.insertAdjacentHTML('beforeend', insertAdjacentHTML(data));
+    
+            } catch (error) {
+                alert('도시를 찾을 수 없거나 오류가 발생했습니다.');
+                console.error(error);
+            }
+        }
+
+        getWeather();
+
+        function insertAdjacentHTML(data) {
+            // 하루 1개(매일 낮 12시 기준) 데이터 추출
+            const dailyList = data.list.filter(item => item.dt_txt.includes('12:00:00'));
+
+            const listHTML = dailyList.map(item => {
+                // 날짜 포맷 변경 (예: "7월 30일 목요일")
+                const dateObj = new Date(item.dt_txt);
+                const month = dateObj.getMonth() + 1;
+                const date = dateObj.getDate();
+                const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+                const dayName = dayNames[dateObj.getDay()];
+                const formattedDate = `${month}월 ${date}일 ${dayName}`;
+
+                // 날씨 아이콘 코드 매핑
+                const iconCode = item.weather[0].icon;
+                let newIconUrl = '';
+
+                switch (true) {
+                    case /01/.test(iconCode): // 맑음
+                        newIconUrl = './images/clear.png';
+                        break;
+                    case /02|03/.test(iconCode): // 구름조금
+                        newIconUrl = './images/clouds.png';
+                        break;
+                    case /04/.test(iconCode): // 흐림 / 튼구름
+                        newIconUrl = './images/broken_clouds.png';
+                        break;
+                    case /09|10/.test(iconCode): // 비 / 소나기
+                        newIconUrl = './images/rain.png';
+                        break;
+                    case /11/.test(iconCode): // 뇌우
+                        newIconUrl = './images/thunderstorm.png';
+                        break;
+                    case /13/.test(iconCode): // 눈
+                        newIconUrl = './images/snow.png';
+                        break;
+                    case /50/.test(iconCode): // 안개
+                        newIconUrl = './images/mist.png';
+                        break;
+                    default: // 기본값
+                        newIconUrl = './images/clear.png';
+                }
+
+                return `
+                    <div class="weather-card">
+                        <div class="date">${formattedDate}</div>
+                        <img class="icon" src="${newIconUrl}" alt="${item.weather[0].description}">
+                        <div class="description">${item.weather[0].description}</div>
+                        <p class="info">온도: ${Math.round(item.main.temp * 10) / 10}°C</p>
+                        <p class="info">습도: ${item.main.humidity}%</p>
+                        <p class="info">바람: ${item.wind.speed} m/s</p>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <h1>${data.city.name} 날씨 (5일 예보)</h1>
+                <div class="weather-container">
+                    ${listHTML}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

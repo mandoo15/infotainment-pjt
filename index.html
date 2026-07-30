@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #map{
+            width: 600px;
+            height: 400px;
+
+        }
+    </style>
+</head>
+<body>
+    <h2>카카오 지도 예제</h2>
+    <div id="map"></div>
+    <input type="text" id="search-input" placeholder="검색할 장소를 입력하세요.">
+    <button id="search-button">검색</button>
+    <div class="search-result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a7516aacd506685ab91aaf1f8566c6b7&libraries=services"></script>
+    <script>
+       window.onload = function() {
+
+        let map;
+        let marker;
+
+        // 클릭했을 때, 지도에 마커 표시 위해서
+        let currentPosition;
+        // 검색 결과의 마커를 넣어둔다. -> 넣어둔거를 제거할 필요가 있음, 다른거 검색했을 때, 마커가 계속 남아있습니다.
+        // 그랫 이전 결과를 한번에 null 처리해서 안보이게 해주기 위해서
+        let markers = [];
+
+        // 카카오 객체 마커를 설명하는 창
+        const infowindow = new kakao.maps.InfoWindow({zIndex:1});
+
+        // 장소(위치정보) 객체를 불러와야한다.
+        const place = new kakao.maps.services.Places();
+
+        // 1. 지도 기본 생성
+        function initMap(){
+            // 지도에 필요한 파라미터를 정의
+            const container = document.querySelector("#map");
+            const options = {
+
+                center: new kakao.maps.LatLng(37.50136, 127.0396),
+                level: 4 // 지도 크기
+            };
+            map = new kakao.maps.Map(container, options)
+            
+            marker = new kakao.maps.Marker({
+                position: options.center,
+                map: map
+            })
+        }
+
+        initMap();
+
+        // 현재 위치를 가져오기 브라우저에 있음 web api
+
+        function moveToCurrentLocation(){
+            if(navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(function(position){
+                    const latitude = position.coords.latitude
+                    const longitude = position.coords.longitude
+                    console.log(position)
+                    console.log(latitude)
+                    console.log(longitude)
+
+                    // 카카오 객체 사용해서 지도에 적용하자
+                    const moveLatLog = new kakao.maps.LatLng(latitude, longitude)
+                    map.setCenter(moveLatLog)
+                    marker.setPosition(moveLatLog)
+                }, function(){
+                    alert("현재 위치를 가져올 수 없습니다.")
+                })
+            }else{
+                alert("이 브라우저는 GPS를 지원하지 않습니다.")
+            }
+        }
+
+        moveToCurrentLocation()
+
+        // 지도 부분에 검색창 넣기
+        function searchPlace(){
+            const keyword = document.querySelector('#search-input').value;
+            // 키워드가 공백인경우
+            if(!keyword.trim()){
+                alert("검색어를 적어주세요.")
+                return;
+            }
+
+            // 실제로 검색 결과를 받아야된다. 만약 수원역 검색하면 수원역 근처 수원역이라는 이름을 쓰는 리스트 있어야된다.
+            // 이 리스트는 저는 없슷ㅂ니다. -> 카카오에 있습니다. 즉, 카카오에 요청을 해야한다.
+            // place라는 객체를 사용해서 데이터를 가져온다.
+
+            // 카카오 sdk 안에 정의된 함수
+            place.keywordSearch(keyword, placeSearchCallback)
+        }
+
+        // 카카오 sdk에 사용되는 콜백함수 정의(카카오에서 요구한 스펙에 맞춰 내가 만든 함수)
+        function placeSearchCallback(data, status) {
+            if(status === kakao.maps.services.Status.OK){
+                console.log(data)
+                // 실제로 리스트를 구현하는 로직이 들어간다.
+            }else{
+                alert("검색 결과가 없습니다.")
+            }
+        }
+
+
+        document.querySelector('#search-button').addEventListener('click', searchPlace)
+        
+        function displayPlaces(place){
+            // 사용되는건 forEach -> div 태그 반복해서 붙여넣기
+            const listEl = document.querySelector('.search-result')
+
+            listEl.innerHTML = '';
+            // 마커들도 재검색하면 삭제 함수 정의해서 날리도록
+
+            place.forEach((p) => {
+                // 실제로 클릭이 되었을 때, 지도에 반영하기 위해 사용되는 position, marker
+                const position = new kakao.maps.LatLng(p.y, p.x)
+
+                const markerItem = new kakao.maps.Marker({
+                    position: position,
+                    map: map
+                })
+                markers.push(markerItem)
+
+                // 화면에 리스트 뿌리는 작업
+                const itemHtml = `
+                    <div class="item">
+                        <strong>${p.place_name}</strong><br>
+                        <p>${p.address_name}</p>
+                    </div>
+                `
+
+                listEl.insertAdjacentHTML('beforeend', itemHtml)
+
+                // 루프 돌때마다 마지막 div 이벤트를 달아주면 된다
+                const item = listEl.lastElementChild;
+
+                // 리스트 클릭했을 때
+                item.addEventListener('click', () => {
+                    map.setCenter(position)
+                    infowindow.setContent(`<div>${p.place_name}</div>`)
+                    infowindow.open(map, markerItem) // 지도 및 마커 위에 윈포윈도우를 띄우는 작업   
+                })
+
+                // 마커 클릭했을 때
+                kakao.maps.event.addListener(markerItem, "click", () => {
+                    map.setCenter(position)
+                    infowindow.setContent(`<div>${p.place_name}</div>`)
+                    infowindow.open(map, markerItem) // 지도 및 마커 위에 윈포윈도우를 띄우는 작업
+                })
+            })
+        }
+    }   
+    </script>
+</body>
+</html>
